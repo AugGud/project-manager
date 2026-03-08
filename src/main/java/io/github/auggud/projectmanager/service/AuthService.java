@@ -1,9 +1,12 @@
 package io.github.auggud.projectmanager.service;
 
 import io.github.auggud.projectmanager.dto.AuthResponse;
+import io.github.auggud.projectmanager.dto.LoginRequest;
 import io.github.auggud.projectmanager.dto.RegisterRequest;
 import io.github.auggud.projectmanager.entity.User;
 import io.github.auggud.projectmanager.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +15,12 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -27,5 +32,13 @@ public class AuthService {
         userRepository.save(user);
 
         return new AuthResponse("User registered successfully");
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
+        );
+
+        return new AuthResponse("Successfully logged in");
     }
 }
