@@ -5,8 +5,10 @@ import io.github.auggud.projectmanager.dto.LoginRequest;
 import io.github.auggud.projectmanager.dto.RegisterRequest;
 import io.github.auggud.projectmanager.entity.User;
 import io.github.auggud.projectmanager.repository.UserRepository;
+import io.github.auggud.projectmanager.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,19 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       UserDetailsService userDetailsService,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -39,6 +49,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
-        return new AuthResponse("Successfully logged in");
+        User user = (User) userDetailsService.loadUserByUsername(request.username());
+        String token = jwtService.generateToken(user);
+        return new AuthResponse(token);
     }
 }
