@@ -1,8 +1,8 @@
 package io.github.auggud.projectmanager.service;
 
-import io.github.auggud.projectmanager.dto.AuthResponse;
-import io.github.auggud.projectmanager.dto.LoginRequest;
-import io.github.auggud.projectmanager.dto.RegisterRequest;
+import io.github.auggud.projectmanager.dto.AuthResponseDto;
+import io.github.auggud.projectmanager.dto.LoginRequestDto;
+import io.github.auggud.projectmanager.dto.RegisterRequestDto;
 import io.github.auggud.projectmanager.entity.User;
 import io.github.auggud.projectmanager.repository.UserRepository;
 import io.github.auggud.projectmanager.security.JwtService;
@@ -33,7 +33,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponseDto register(RegisterRequestDto request) {
         User user = new User();
         user.setUsername(request.username());
         user.setPassword(passwordEncoder.encode(request.password()));
@@ -41,16 +41,16 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return new AuthResponse("User registered successfully");
+        return new AuthResponseDto("User registered successfully");
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponseDto login(LoginRequestDto request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
         User user = (User) userDetailsService.loadUserByUsername(request.username());
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        return new AuthResponseDto(token);
     }
 }

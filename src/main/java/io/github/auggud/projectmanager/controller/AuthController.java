@@ -1,8 +1,8 @@
 package io.github.auggud.projectmanager.controller;
 
-import io.github.auggud.projectmanager.dto.AuthResponse;
-import io.github.auggud.projectmanager.dto.LoginRequest;
-import io.github.auggud.projectmanager.dto.RegisterRequest;
+import io.github.auggud.projectmanager.dto.AuthResponseDto;
+import io.github.auggud.projectmanager.dto.LoginRequestDto;
+import io.github.auggud.projectmanager.dto.RegisterRequestDto;
 import io.github.auggud.projectmanager.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,14 +20,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
+        AuthResponseDto response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
+    public ResponseEntity<AuthResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
+        AuthResponseDto response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

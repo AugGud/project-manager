@@ -1,4 +1,4 @@
 package io.github.auggud.projectmanager.dto;
 
-public record AuthResponse(String message) {
+public record AuthResponseDto(String message) {
 }
